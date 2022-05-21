@@ -1,36 +1,52 @@
-function handleMouseEnter() {
-  this.classList.add('s-card--hovered');
+function handleCardMouseEnter() {
   document.body.id = `${this.id}-hovered`;
 }
 
-function handleMouseLeave() {
-  this.classList.remove('s-card--hovered');
+function handleCardMouseLeave() {
   document.body.id = '';
 }
 
 function addEventListenersToCards() {
   const cardElements = document.getElementsByClassName('s-card');
-  
-  for (let index = 0; index < cardElements.length; index++) {
-    const card = cardElements[index];
-    card.addEventListener('mouseenter', handleMouseEnter);
-    card.addEventListener('mouseleave', handleMouseLeave);
+  for (card of cardElements) {
+      card.addEventListener("mouseenter", handleCardMouseEnter);
+      card.addEventListener("mouseleave", handleCardMouseLeave);
   }
 }
 
-document.addEventListener("DOMContentLoaded", addEventListenersToCards, false);
+function setActiveController(selectedController) {
+  const activeButtonElement = document.querySelector('.s-controller__button--active');
+  activeButtonElement.classList.remove('s-controller__button--active');
+  selectedController.classList.add('s-controller__button--active');
+}
 
-function selectCarouselItem(selectedButtonElement) {
-  const selectedItem = selectedButtonElement.id;
+function setActiveCard(selectedCard) {
+  const activeCard = document.querySelector('.s-card--active');
+  activeCard.classList.remove('s-card--active');
+  selectedCard.classList.add('s-card--active');
+}
+
+function selectCarouselItem() {
+  const selectedItem = this.id;
   const carousel = document.querySelector('.s-cards-carousel');
   const transform = carousel.style.transform;
   const rotateY = transform.match(/rotateY\((-?\d+deg)\)/i);
-  const rotateYDeg = -120 * (Number(selectedItem) - 1);
+  const rotateYDeg = -120 * ( Number(selectedItem) -1 );
   const newTransform = transform.replace(rotateY[0], `rotateY(${rotateYDeg}deg)`);
+  const selectedCard = document.getElementById(`spider-man-0${selectedItem}`);
 
   carousel.style.transform = newTransform;
-
-  const activeButtonElement = document.querySelector('.s-controller__button--active');
-  activeButtonElement.classList.remove('s-controller__button--active');
-  selectedButtonElement.classList.add('s-controller__button--active');
+  setActiveController(this);
+  setActiveCard(selectedCard);
 }
+
+function addEventListenerToControllers() {
+  const controllerElements = document.getElementsByClassName('s-controller__button');
+
+  for (controller of controllerElements) {
+      controller.addEventListener("click", selectCarouselItem);
+  };
+}
+
+document.addEventListener("DOMContentLoaded", addEventListenersToCards, false);
+document.addEventListener("DOMContentLoaded", addEventListenerToControllers, false);
